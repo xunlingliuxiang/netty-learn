@@ -7,6 +7,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.ServerSocketChannel;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 public class ChatServer {
@@ -18,9 +19,9 @@ public class ChatServer {
         try {
             serverBootstrap.group(boss,worker)
                     .channel(NioServerSocketChannel.class)
-                    .childHandler(new ChannelInitializer<ServerSocketChannel>() {
+                    .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
-                        protected void initChannel(ServerSocketChannel ch) throws Exception {
+                        protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast(new ServerHandler());
                         }
                     });

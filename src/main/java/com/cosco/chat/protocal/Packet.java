@@ -1,5 +1,6 @@
 package com.cosco.chat.protocal;
 
+import com.cosco.chat.protocal.command.Command;
 import lombok.Data;
 
 @Data

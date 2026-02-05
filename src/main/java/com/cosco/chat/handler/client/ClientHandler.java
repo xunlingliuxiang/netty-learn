@@ -1,6 +1,8 @@
 package com.cosco.chat.handler.client;
 
+import com.cosco.chat.protocal.Packet;
 import com.cosco.chat.protocal.request.LoginRequestPacket;
+import com.cosco.chat.protocal.response.LoginResponsePacket;
 import com.cosco.chat.serialize.PacketCodeC;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -15,7 +17,27 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         login.setUserName("admin");
         login.setPassword("admin");
         login.setUserId(1);
-        ByteBuf buffer = PacketCodeC.encode(ctx.alloc().buffer(), login);
+        ByteBuf buffer = PacketCodeC.INSTANCE.encode(ctx.alloc().buffer(), login);
         ctx.channel().writeAndFlush(buffer);
+    }
+
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        ByteBuf byteBuf = (ByteBuf) msg;
+        Packet decode = PacketCodeC.INSTANCE.decode(byteBuf);
+        if (decode instanceof LoginResponsePacket){
+            LoginResponsePacket responsePacket = (LoginResponsePacket) decode;
+            if (responsePacket.isSuccess()){
+                System.out.println("客户端登录成功,用户:" + responsePacket.getUserName());
+            }else{
+                System.out.println("客户端登录失败");
+            }
+        }
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        System.out.println("客户端发生异常: " + cause.getMessage());
+        ctx.close();
     }
 }
