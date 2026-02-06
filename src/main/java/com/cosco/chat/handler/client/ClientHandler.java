@@ -26,24 +26,24 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         ctx.channel().writeAndFlush(buffer);
     }
 
-    @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        ByteBuf byteBuf = (ByteBuf) msg;
-        Packet decode = PacketCodeC.INSTANCE.decode(byteBuf);
-        if (decode instanceof LoginResponsePacket){
-            LoginResponsePacket responsePacket = (LoginResponsePacket) decode;
-            if (responsePacket.isSuccess()){
-                SessionUtil.bindSession(new Session(responsePacket.getUserId(), responsePacket.getUserName()), ctx.channel());
-                System.out.println("客户端登录成功,用户:" + responsePacket.getUserName());
-            }
-            else{
-                System.out.println("客户端登录失败");
-            }
-        } else if (decode instanceof MessageResponsePacket) {
-            MessageResponsePacket messageResponsePacket = (MessageResponsePacket) decode;
-            System.out.println(new Date() + "： 收到服务端的消息： " + messageResponsePacket.getMessage());
-        }
-    }
+//    @Override
+//    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+//        ByteBuf byteBuf = (ByteBuf) msg;
+//        Packet decode = PacketCodeC.INSTANCE.decode(byteBuf);
+//        if (decode instanceof LoginResponsePacket){
+//            LoginResponsePacket responsePacket = (LoginResponsePacket) decode;
+//            if (responsePacket.isSuccess()){
+//                SessionUtil.bindSession(new Session(responsePacket.getUserId(), responsePacket.getUserName()), ctx.channel());
+//                System.out.println("客户端登录成功,用户:" + responsePacket.getUserName());
+//            }
+//            else{
+//                System.out.println("客户端登录失败");
+//            }
+//        } else if (decode instanceof MessageResponsePacket) {
+//            MessageResponsePacket messageResponsePacket = (MessageResponsePacket) decode;
+//            System.out.println(new Date() + "： 收到服务端的消息： " + messageResponsePacket.getMessage());
+//        }
+//    }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {

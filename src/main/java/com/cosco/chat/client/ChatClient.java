@@ -1,7 +1,12 @@
 package com.cosco.chat.client;
 
 import com.cosco.chat.command.ConsoleCommandManger;
+import com.cosco.chat.handler.PacketDecoder;
+import com.cosco.chat.handler.PacketEncoder;
+import com.cosco.chat.handler.Spliter;
 import com.cosco.chat.handler.client.ClientHandler;
+import com.cosco.chat.handler.server.LoginResponseHandler;
+import com.cosco.chat.handler.server.MessageResponseHandler;
 import com.cosco.chat.protocal.request.MessageRequestPacket;
 import com.cosco.chat.serialize.PacketCodeC;
 import io.netty.bootstrap.Bootstrap;
@@ -12,6 +17,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 
 import java.util.Date;
 import java.util.Scanner;
@@ -29,7 +35,13 @@ public class ChatClient {
                     .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) {
+                            ch.pipeline().addLast(new Spliter());
+                            ch.pipeline().addLast(new PacketDecoder());
                             ch.pipeline().addLast(new ClientHandler());
+                            ch.pipeline().addLast(new LoginResponseHandler());
+                            ch.pipeline().addLast(new MessageResponseHandler());
+                            ch.pipeline().addLast(new PacketEncoder());
+//                            ch.pipeline().addLast(new ClientHandler());
                         }
                     });
 //            bootstrap.connect("localhost",port).sync();

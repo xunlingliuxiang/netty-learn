@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PacketCodeC {
-    private static final int MAGIC_NUMBER = 0x12345678;
+    public static final int MAGIC_NUMBER = 0x12345678;
     /**
      * 序列化器们
      */
@@ -52,7 +52,7 @@ public class PacketCodeC {
         byte[] serialize = Serializer.DEFAULT.serialize(msg);
         // 3.编码
         byteBuf.writeInt(MAGIC_NUMBER);
-        byteBuf.writeByte(msg.getVersion());
+        byteBuf.writeByte(Packet.getVersion());
         byteBuf.writeByte(Serializer.DEFAULT.getSerializerAlgorithm());
         byteBuf.writeByte(msg.getCommand());
         byteBuf.writeInt(serialize.length);

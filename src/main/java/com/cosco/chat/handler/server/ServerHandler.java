@@ -26,7 +26,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
             }
 
             LoginResponsePacket responsePacket = new LoginResponsePacket();
-            responsePacket.setVersion(decode.getVersion());
+            responsePacket.setVersion(Packet.getVersion());
 
             if (decode instanceof LoginRequestPacket){
                 LoginRequestPacket loginRequestPacket = (LoginRequestPacket) decode;

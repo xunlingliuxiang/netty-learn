@@ -16,4 +16,8 @@ public abstract class Packet {
      * @return
      */
     public abstract Byte getCommand();
+
+    public static Byte getVersion(){
+        return 1;
+    }
 }
