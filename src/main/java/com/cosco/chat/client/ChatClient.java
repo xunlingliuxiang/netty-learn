@@ -3,7 +3,7 @@ package com.cosco.chat.client;
 import com.cosco.chat.command.ConsoleCommandManger;
 import com.cosco.chat.handler.PacketDecoder;
 import com.cosco.chat.handler.PacketEncoder;
-import com.cosco.chat.handler.Spliter;
+import com.cosco.chat.handler.Splitter;
 import com.cosco.chat.handler.client.ClientHandler;
 import com.cosco.chat.handler.server.LoginResponseHandler;
 import com.cosco.chat.handler.server.MessageResponseHandler;
@@ -17,7 +17,6 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 
 import java.util.Date;
 import java.util.Scanner;
@@ -35,9 +34,8 @@ public class ChatClient {
                     .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) {
-                            ch.pipeline().addLast(new Spliter());
+//                            ch.pipeline().addLast(new Splitter());
                             ch.pipeline().addLast(new PacketDecoder());
-                            ch.pipeline().addLast(new ClientHandler());
                             ch.pipeline().addLast(new LoginResponseHandler());
                             ch.pipeline().addLast(new MessageResponseHandler());
                             ch.pipeline().addLast(new PacketEncoder());
@@ -65,7 +63,6 @@ public class ChatClient {
                 // 定时任务下次执行重连的时间
                 int delay = 1 << order;
                 System.err.println(new Date() + ": 连接失败，第" + order + "次重连……");
-
                 bootstrap.config().group().schedule(() -> connect(bootstrap, host, port, retry - 1),
                         delay, TimeUnit.SECONDS);
             }
@@ -77,15 +74,15 @@ public class ChatClient {
             Scanner scanner = new Scanner(System.in);
             while (!Thread.interrupted() && channel.isActive()) {
                 // 执行命令
-//                ConsoleCommandManger consoleCommandManger = new ConsoleCommandManger();
-//                consoleCommandManger.execCommand(scanner, channel);
-                System.out.println("输入消息发送至服务端： ");
-                Scanner sc = new Scanner(System.in);
-                String line = sc.nextLine();
-                MessageRequestPacket packet = new MessageRequestPacket();
-                packet.setMessage(line);
-                ByteBuf byteBuf = PacketCodeC.INSTANCE.encode(channel.alloc().buffer(), packet);
-                channel.writeAndFlush(byteBuf);
+                ConsoleCommandManger consoleCommandManger = new ConsoleCommandManger();
+                consoleCommandManger.execCommand(scanner, channel);
+//                System.out.println("输入消息发送至服务端： ");
+//                Scanner sc = new Scanner(System.in);
+//                String line = sc.nextLine();
+//                MessageRequestPacket packet = new MessageRequestPacket();
+//                packet.setMessage(line);
+//                ByteBuf byteBuf = PacketCodeC.INSTANCE.encode(channel.alloc().buffer(), packet);
+//                channel.writeAndFlush(byteBuf);
             }
             if (!channel.isActive()) {
                 System.out.println("连接已断开，请重启客户端重试");

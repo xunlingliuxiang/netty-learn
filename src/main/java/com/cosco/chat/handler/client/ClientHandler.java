@@ -12,6 +12,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
 import java.util.Date;
+import java.util.UUID;
 
 public class ClientHandler extends ChannelInboundHandlerAdapter {
 
@@ -21,7 +22,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         LoginRequestPacket login = new LoginRequestPacket();
         login.setUserName("admin");
         login.setPassword("admin");
-        login.setUserId(1);
+        login.setUserId(UUID.randomUUID().toString());
         ByteBuf buffer = PacketCodeC.INSTANCE.encode(ctx.alloc().buffer(), login);
         ctx.channel().writeAndFlush(buffer);
     }

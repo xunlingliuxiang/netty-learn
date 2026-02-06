@@ -1,5 +1,7 @@
 package com.cosco.chat.command;
 
+import com.cosco.chat.command.impl.LoginConsoleCommand;
+import com.cosco.chat.command.impl.SendToUserConsoleCommand;
 import com.cosco.chat.util.SessionUtil;
 import io.netty.channel.Channel;
 
@@ -20,8 +22,8 @@ public class ConsoleCommandManger {
 
     public ConsoleCommandManger() {
         // 策略模式进行管理
-//        consoleCommandMap.put("sendToUser", new SendToUserConsoleCommand());
-//        consoleCommandMap.put("login", new LoginConsoleCommand());
+        consoleCommandMap.put("sendToUser", new SendToUserConsoleCommand());
+        consoleCommandMap.put("login", new LoginConsoleCommand());
 //        consoleCommandMap.put("createGroup", new CreateGroupConsoleCommand());
 //        consoleCommandMap.put("joinGroup", new JoinGroupConsoleCommand());
 //        consoleCommandMap.put("quitGroup", new QuitGroupConsoleCommand());
@@ -38,16 +40,43 @@ public class ConsoleCommandManger {
             ConsoleCommand login = consoleCommandMap.get("login");
             login.exec(scanner, channel);
         } else {
-            //  获取指令
-            System.out.println("请输入要执行的指令");
-            String command = scanner.next();
+            // 显示菜单
+            System.out.println("\n========================================");
+            System.out.println("            请选择要执行的操作");
+            System.out.println("========================================");
+            int index = 1;
+            for (String commandName : consoleCommandMap.keySet()) {
+                System.out.println("  " + index + ". " + commandName);
+                index++;
+            }
+            System.out.println("========================================");
+            System.out.print("请输入操作编号: ");
 
-            ConsoleCommand consoleCommand = consoleCommandMap.get(command);
-            if (consoleCommand == null) {
-                System.err.println("无法识别[" + command + "]指令，请重新输入!");
-            } else {
-                // 执行对应命令
-                consoleCommand.exec(scanner, channel);
+            // 获取用户输入
+            String input = scanner.next();
+            try {
+                int choice = Integer.parseInt(input);
+
+                // 根据选择的数字获取对应的命令
+                index = 1;
+                String selectedCommand = null;
+                for (String commandName : consoleCommandMap.keySet()) {
+                    if (index == choice) {
+                        selectedCommand = commandName;
+                        break;
+                    }
+                    index++;
+                }
+
+                if (selectedCommand != null) {
+                    ConsoleCommand consoleCommand = consoleCommandMap.get(selectedCommand);
+                    System.out.println("\n执行指令: " + selectedCommand);
+                    consoleCommand.exec(scanner, channel);
+                } else {
+                    System.err.println("无效的选择，请输入 1-" + consoleCommandMap.size() + " 之间的数字!");
+                }
+            } catch (NumberFormatException e) {
+                System.err.println("输入格式错误，请输入数字!");
             }
         }
     }

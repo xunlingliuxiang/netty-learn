@@ -9,8 +9,11 @@ import io.netty.channel.SimpleChannelInboundHandler;
 public class LoginResponseHandler extends SimpleChannelInboundHandler<LoginResponsePacket> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LoginResponsePacket msg) throws Exception {
+//        System.out.println("收到登录响应: success=" + msg.isSuccess() + ", userId=" + msg.getUserId() + ", userName=" + msg.getUserName());
         if (msg.isSuccess()){
-            SessionUtil.bindSession(new Session(msg.getUserId(), msg.getUserName()), ctx.channel());
+            Session session = new Session(msg.getUserId(), msg.getUserName());
+            SessionUtil.bindSession(session, ctx.channel());
+//            System.out.println("Session已绑定: " + session);
             System.out.println("客户端登录成功,用户:" + msg.getUserName());
         }
         else{

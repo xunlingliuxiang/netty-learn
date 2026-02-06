@@ -40,6 +40,20 @@ public class SessionUtil {
     }
 
     /**
+     * 绑定群ID和groupChannel
+     */
+    public static void bindChannelGroup(String groupId, ChannelGroup channelGroup) {
+        groupIdChannelGroupMap.put(groupId, channelGroup);
+    }
+
+    /**
+     * 获取groupChannel
+     */
+    public static ChannelGroup getChannelGroup(String groupId) {
+        return groupIdChannelGroupMap.get(groupId);
+    }
+
+    /**
      * 根据该变量是否有来判断是否登录成功
      */
     public static boolean hasLogin(Channel channel) {
@@ -51,5 +65,25 @@ public class SessionUtil {
      */
     public static Session getSession(Channel channel) {
         return channel.attr(Attributes.SESSION).get();
+    }
+
+    /**
+     * 获取Channel信息
+     */
+    public static Channel getChannel(String userName) {
+        return userNameChannelMap.get(userName);
+    }
+
+    /**
+     * 获取用户名
+     */
+    public static String getUserName(Channel channel) {
+        for (Map.Entry<String, Channel> entry : userNameChannelMap.entrySet()) {
+            if (entry.getValue().equals(channel)) {
+                return entry.getKey();
+            }
+        }
+
+        return null;
     }
 }
