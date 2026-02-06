@@ -5,7 +5,9 @@ import com.alibaba.fastjson.serializer.JSONSerializer;
 import com.cosco.chat.protocal.Packet;
 import com.cosco.chat.protocal.command.Command;
 import com.cosco.chat.protocal.request.LoginRequestPacket;
+import com.cosco.chat.protocal.request.MessageRequestPacket;
 import com.cosco.chat.protocal.response.LoginResponsePacket;
+import com.cosco.chat.protocal.response.MessageResponsePacket;
 import com.cosco.chat.serialize.algorithm.SerializerAlgorithm;
 import com.cosco.chat.serialize.impl.JsonSerializer;
 import io.netty.buffer.ByteBuf;
@@ -36,18 +38,14 @@ public class PacketCodeC {
         // 登录
         packetTypeMap.put(Command.LOGIN_REQUEST, LoginRequestPacket.class);
         packetTypeMap.put(Command.LOGIN_RESPONSE, LoginResponsePacket.class);
+        packetTypeMap.put(Command.MESSAGE_REQUEST, MessageRequestPacket.class);
+        packetTypeMap.put(Command.MESSAGE_RESPONSE, MessageResponsePacket.class);
     }
     public ByteBuf encode(ByteBuf out,Packet packet) {
         // 1.创建byteBuf对象
         return writeByteBufInfo(out,packet);
     }
 
-    /**
-     * 编码
-     */
-//    public static ByteBuf encode(ByteBuf out, Packet msg) {
-//        return writeByteBufInfo(out, msg);
-//    }
 
     private static ByteBuf writeByteBufInfo(ByteBuf byteBuf, Packet msg) {
         // 2.序列化java对象

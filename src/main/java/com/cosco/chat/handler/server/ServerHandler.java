@@ -2,11 +2,15 @@ package com.cosco.chat.handler.server;
 
 import com.cosco.chat.protocal.Packet;
 import com.cosco.chat.protocal.request.LoginRequestPacket;
+import com.cosco.chat.protocal.request.MessageRequestPacket;
 import com.cosco.chat.protocal.response.LoginResponsePacket;
+import com.cosco.chat.protocal.response.MessageResponsePacket;
 import com.cosco.chat.serialize.PacketCodeC;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import io.netty.util.ReferenceCountUtil;
+
+import java.util.Date;
 
 
 public class ServerHandler extends ChannelInboundHandlerAdapter {
@@ -36,6 +40,15 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
                 }
                 ByteBuf encode = PacketCodeC.INSTANCE.encode(ctx.alloc().buffer(), responsePacket);
                 ctx.channel().writeAndFlush(encode);
+            } else if (decode instanceof MessageRequestPacket) {
+                MessageRequestPacket messageRequestPacket = (MessageRequestPacket) decode;
+                System.out.println(new Date() + ":服务端收到消息:" + messageRequestPacket.getMessage());
+                MessageResponsePacket messageResponsePacket = new MessageResponsePacket();
+                messageResponsePacket.setMessage("服务端回复【" +
+                        messageRequestPacket.getMessage() + "】");
+                ByteBuf responseByteBuf = PacketCodeC.INSTANCE.encode(ctx.alloc().buffer(),
+                        messageResponsePacket);
+                ctx.channel().writeAndFlush(responseByteBuf);
             }
         } finally {
             ReferenceCountUtil.release(msg);
